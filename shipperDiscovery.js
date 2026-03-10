@@ -6,7 +6,7 @@
 // ============================================================
 
 const axios = require('axios');
-const supabase = require('../config/supabase');
+const supabase = require('./config/supabase');
 const logger = require('../utils/logger');
 const { notifyStage } = require('./notificationEngine');
 
