@@ -3,5 +3,4 @@ const logger = {
   warn: (...args) => console.warn('[WARN]', ...args),
   error: (...args) => console.error('[ERROR]', ...args),
 };
-
 module.exports = logger;
