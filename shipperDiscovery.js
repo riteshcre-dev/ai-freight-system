@@ -7,7 +7,7 @@
 
 const axios = require('axios');
 const supabase = require('./config/supabase');
-const logger = require('../utils/logger');
+const logger = require('./utils/logger');
 const { notifyStage } = require('./notificationEngine');
 
 const GOOGLE_KEY = process.env.GOOGLE_PLACES_API_KEY;
