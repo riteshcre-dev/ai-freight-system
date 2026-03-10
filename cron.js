@@ -4,8 +4,8 @@
 // ============================================================
 
 const cron = require('node-cron');
-const logger = require('../utils/logger');
-const supabase = require('../config/supabase');
+const logger = require('./utils/logger');
+const supabase = require('./config/supabase');
 
 function startCronJobs() {
   // ── Send queued emails every 5 minutes ───────────────────

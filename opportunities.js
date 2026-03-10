@@ -1,6 +1,6 @@
 // routes/opportunities.js
 const express = require('express');
-const supabase = require('../config/supabase');
+const supabase = require('./config/supabase');
 const { getAgentQueue } = require('../workers/queues');
 const router = express.Router();
 

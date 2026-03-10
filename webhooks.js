@@ -1,8 +1,8 @@
 // routes/webhooks.js
 // Handles SendGrid inbound email + event webhooks
 const express = require('express');
-const supabase = require('../config/supabase');
-const logger = require('../utils/logger');
+const supabase = require('./config/supabase');
+const logger = require('./utils/logger');
 const { getReplyQueue } = require('../workers/queues');
 const router = express.Router();
 

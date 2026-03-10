@@ -4,7 +4,7 @@
 // ============================================================
 
 const Bull = require('bull');
-const logger = require('../utils/logger');
+const logger = require('./utils/logger');
 
 let searchQueue, emailQueue, followUpQueue, replyQueue, agentQueue;
 

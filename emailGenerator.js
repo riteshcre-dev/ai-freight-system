@@ -5,8 +5,8 @@
 // ============================================================
 
 const Anthropic = require('@anthropic-ai/sdk');
-const supabase = require('../config/supabase');
-const logger = require('../utils/logger');
+const supabase = require('./config/supabase');
+const logger = require('./utils/logger');
 const { notifyStage } = require('./notificationEngine');
 
 const claude = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });

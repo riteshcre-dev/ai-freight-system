@@ -1,6 +1,6 @@
 // routes/dashboard.js
 const express = require('express');
-const supabase = require('../config/supabase');
+const supabase = require('./config/supabase');
 const router = express.Router();
 
 // GET /api/dashboard/stats

@@ -6,8 +6,8 @@
 // ============================================================
 
 const sgMail = require('@sendgrid/mail');
-const supabase = require('../config/supabase');
-const logger = require('../utils/logger');
+const supabase = require('./config/supabase');
+const logger = require('./utils/logger');
 const { notifyStage } = require('./notificationEngine');
 const { getFollowUpQueue } = require('../workers/queues');
 

@@ -2,7 +2,7 @@
 const express = require('express');
 const { z } = require('zod');
 const { v4: uuidv4 } = require('uuid');
-const supabase = require('../config/supabase');
+const supabase = require('./config/supabase');
 const { getSearchQueue } = require('../workers/queues');
 const router = express.Router();
 

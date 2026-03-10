@@ -6,8 +6,8 @@
 
 const sgMail = require('@sendgrid/mail');
 const twilio = require('twilio');
-const supabase = require('../config/supabase');
-const logger = require('../utils/logger');
+const supabase = require('./config/supabase');
+const logger = require('./utils/logger');
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
