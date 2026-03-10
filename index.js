@@ -29,7 +29,7 @@ const PORT = process.env.PORT || 3001;
 // ── Middleware ────────────────────────────────────────────────
 app.use(helmet());
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: ['https://courteous-learning-production.up.railway.app', 'http://localhost:3000', process.env.FRONTEND_URL].filter(Boolean),
   credentials: true
 }));
 app.use(morgan('combined', { stream: { write: msg => logger.info(msg.trim()) } }));
