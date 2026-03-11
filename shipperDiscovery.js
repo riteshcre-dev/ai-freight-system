@@ -85,7 +85,10 @@ async function searchGooglePlaces(keyword, location) {
       params: { query, key: GOOGLE_KEY, type: 'establishment' }
     });
 
-    if (resp.data.status !== 'OK') return [];
+    if (resp.data.status !== 'OK') {
+      logger.error('[ShipperDiscovery] Google Places status:', resp.data.status, resp.data.error_message || '');
+      return [];
+    }
 
     return resp.data.results.map(p => ({
       name: p.name,
