@@ -43,7 +43,7 @@ async function discoverContacts(companies) {
       allContacts.push(...contacts);
 
       // Throttle API calls
-      await sleep(300);
+      await sleep(2000); // Hunter free plan: max 25 requests/month, slow down
     } catch (err) {
       logger.error(`[ContactDiscovery] Error for ${company.name}:`, err.message);
     }
