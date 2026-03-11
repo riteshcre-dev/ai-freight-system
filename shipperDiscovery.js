@@ -117,10 +117,12 @@ async function searchApolloOrganizations({ productType, location, companySize, i
     if (companySize === 'medium') payload.organization_num_employees_ranges = ['51,500'];
     if (companySize === 'large')  payload.organization_num_employees_ranges = ['501,10000'];
 
+    // Remove api_key from body, use Bearer auth instead
+    delete payload.api_key;
     const resp = await axios.post(
-      'https://api.apollo.io/v1/mixed_companies/search',
+      'https://api.apollo.io/api/v1/mixed_companies/search',
       payload,
-      { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' } }
+      { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache', 'X-Api-Key': APOLLO_KEY } }
     );
 
     return (resp.data.organizations || []).map(o => ({
