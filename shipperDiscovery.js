@@ -104,44 +104,9 @@ async function searchGooglePlaces(keyword, location) {
 
 // ── Apollo.io Organization Search ────────────────────────────
 async function searchApolloOrganizations({ productType, location, companySize, importExport }) {
-  try {
-    const payload = {
-      api_key: APOLLO_KEY,
-      q_organization_keyword_tags: [productType],
-      page: 1,
-      per_page: 25,
-    };
-
-    if (location) payload.organization_locations = [location];
-    if (companySize === 'small')  payload.organization_num_employees_ranges = ['1,50'];
-    if (companySize === 'medium') payload.organization_num_employees_ranges = ['51,500'];
-    if (companySize === 'large')  payload.organization_num_employees_ranges = ['501,10000'];
-
-    // Remove api_key from body, use Bearer auth instead
-    delete payload.api_key;
-    const resp = await axios.post(
-      'https://api.apollo.io/api/v1/mixed_companies/search',
-      payload,
-      { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache', 'X-Api-Key': APOLLO_KEY } }
-    );
-
-    return (resp.data.organizations || []).map(o => ({
-      name: o.name,
-      website: o.website_url,
-      industry: o.industry,
-      city: o.city,
-      state: o.state,
-      country: o.country || 'US',
-      company_size: o.estimated_num_employees?.toString(),
-      is_importer: importExport === true || importExport === 'import',
-      is_exporter: importExport === true || importExport === 'export',
-      source: 'apollo',
-      source_id: o.id,
-    }));
-  } catch (err) {
-    logger.error('[ShipperDiscovery] Apollo error:', err.message);
-    return [];
-  }
+  // Apollo free plan does not support org search — skipping
+  logger.info('[ShipperDiscovery] Apollo org search skipped (free plan) — using Google Places only');
+  return [];
 }
 
 // ── Helpers ───────────────────────────────────────────────────
