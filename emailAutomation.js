@@ -87,22 +87,40 @@ async function sendEmail(emailRecord, contact, company) {
 async function sendQueuedEmails(limit = 50) {
   const { data: emails, error } = await supabase
     .from('emails')
-    .select(`
-      *,
-      contact:contacts(*),
-      company:companies(*)
-    `)
+    .select('*')
     .eq('status', 'queued')
     .order('created_at', { ascending: true })
     .limit(limit);
 
-  if (error || !emails?.length) return 0;
+  if (error || !emails?.length) {
+    logger.info('[EmailAuto] No queued emails found');
+    return 0;
+  }
 
   let sent = 0;
   for (const email of emails) {
-    const success = await sendEmail(email, email.contact, email.company);
+    // Fetch contact
+    const { data: contact } = await supabase
+      .from('contacts')
+      .select('*')
+      .eq('id', email.contact_id)
+      .single();
+
+    // Fetch company
+    const { data: company } = await supabase
+      .from('companies')
+      .select('*')
+      .eq('id', email.company_id)
+      .single();
+
+    if (!contact) {
+      logger.warn(`[EmailAuto] No contact found for email ${email.id}`);
+      continue;
+    }
+
+    const success = await sendEmail(email, contact, company || { id: email.company_id, name: 'Unknown' });
     if (success) sent++;
-    await sleep(100); // Rate limit: 10/sec
+    await sleep(500);
   }
 
   logger.info(`[EmailAuto] Batch sent: ${sent}/${emails.length}`);
