@@ -124,6 +124,7 @@ Write a personalized freight brokerage cold email. Rules:
 - Ask a single yes/no question about upcoming shipments
 - Professional but conversational
 - No generic phrases like "I hope this email finds you well"
+- Sign off with: Ritesh Chawla, CTCa Freight
 
 Return ONLY in this exact format:
 SUBJECT: [subject line]
