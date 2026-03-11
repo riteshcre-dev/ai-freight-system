@@ -27,6 +27,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // ── Middleware ────────────────────────────────────────────────
+app.set('trust proxy', 1);
 app.use(helmet());
 app.use(cors({
   origin: ['https://courteous-learning-production.up.railway.app', 'http://localhost:3000', process.env.FRONTEND_URL].filter(Boolean),

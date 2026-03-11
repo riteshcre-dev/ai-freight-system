@@ -120,7 +120,7 @@ async function searchApolloOrganizations({ productType, location, companySize, i
     const resp = await axios.post(
       'https://api.apollo.io/v1/mixed_companies/search',
       payload,
-      { headers: { 'Content-Type': 'application/json' } }
+      { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' } }
     );
 
     return (resp.data.organizations || []).map(o => ({
