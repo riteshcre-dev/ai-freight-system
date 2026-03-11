@@ -1,16 +1,21 @@
 const express = require('express');
 const router = express.Router();
 const logger = require('../utils/logger');
+const supabase = require('../config/supabase');
+
 router.get('/', async (req, res) => {
-  try { res.json({ success: true, data: [] }); }
-  catch (err) { logger.error('Opportunities error:', err); res.status(500).json({ error: 'Failed to fetch opportunities' }); }
+  try {
+    const { data, error } = await supabase
+      .from('opportunities')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(50);
+    if (error) throw error;
+    res.json({ success: true, data: data || [] });
+  } catch (err) {
+    logger.error('Opportunities error:', err);
+    res.status(500).json({ error: 'Failed to fetch opportunities' });
+  }
 });
-router.post('/', async (req, res) => {
-  try { res.status(201).json({ success: true, data: req.body }); }
-  catch (err) { logger.error('Opportunities error:', err); res.status(500).json({ error: 'Failed to create opportunity' }); }
-});
-router.get('/:id', async (req, res) => {
-  try { res.json({ success: true, data: { id: req.params.id } }); }
-  catch (err) { logger.error('Opportunities error:', err); res.status(500).json({ error: 'Failed to fetch opportunity' }); }
-});
+
 module.exports = router;

@@ -1,16 +1,21 @@
 const express = require('express');
 const router = express.Router();
 const logger = require('../utils/logger');
+const supabase = require('../config/supabase');
+
 router.get('/', async (req, res) => {
-  try { res.json({ success: true, data: [] }); }
-  catch (err) { logger.error('Contacts error:', err); res.status(500).json({ error: 'Failed to fetch contacts' }); }
+  try {
+    const { data, error } = await supabase
+      .from('contacts')
+      .select('*, companies(name, city, state)')
+      .order('created_at', { ascending: false })
+      .limit(100);
+    if (error) throw error;
+    res.json({ success: true, data: data || [] });
+  } catch (err) {
+    logger.error('Contacts fetch error:', err);
+    res.status(500).json({ error: 'Failed to fetch contacts' });
+  }
 });
-router.post('/', async (req, res) => {
-  try { res.status(201).json({ success: true, data: req.body }); }
-  catch (err) { logger.error('Contacts error:', err); res.status(500).json({ error: 'Failed to create contact' }); }
-});
-router.get('/:id', async (req, res) => {
-  try { res.json({ success: true, data: { id: req.params.id } }); }
-  catch (err) { logger.error('Contacts error:', err); res.status(500).json({ error: 'Failed to fetch contact' }); }
-});
+
 module.exports = router;
