@@ -9,6 +9,7 @@ const axios = require('axios');
 const supabase = require('./config/supabase');
 const logger = require('./utils/logger');
 const { notifyStage } = require('./notificationEngine');
+const { discoverContacts } = require('./contactDiscovery');
 
 const GOOGLE_KEY = process.env.GOOGLE_PLACES_API_KEY;
 const APOLLO_KEY = process.env.APOLLO_API_KEY;
@@ -72,6 +73,13 @@ async function discoverShippers({ productType, location, companySize, importExpo
   });
 
   logger.info(`[ShipperDiscovery] Found ${saved.length} unique shippers`);
+
+  // Auto-trigger contact discovery in background
+  if (saved.length > 0) {
+    discoverContacts(saved)
+      .catch(err => logger.error('[ShipperDiscovery] Contact discovery failed:', err));
+  }
+
   return saved;
 }
 
