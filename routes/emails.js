@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
   try {
     const { data, error } = await supabase
       .from('emails')
-      .select('*, contacts(first_name, last_name, email), companies(name)')
+      .select('*, contacts(first_name, last_name, email)')
       .order('created_at', { ascending: false })
       .limit(100);
     if (error) throw error;
@@ -21,26 +21,20 @@ router.get('/', async (req, res) => {
 
 router.post('/send', async (req, res) => {
   try {
-    // Get all contacts that haven't been emailed yet
     const { data: contacts, error } = await supabase
       .from('contacts')
       .select('*, companies(*)')
       .limit(50);
-
     if (error) throw error;
     if (!contacts || contacts.length === 0) {
       return res.json({ success: true, message: 'No contacts to email' });
     }
-
     const contactsWithCompanies = contacts.map(c => ({
       contact: c,
       company: c.companies || { id: c.company_id, name: 'Unknown' }
     }));
-
-    // Trigger in background
     generateBatchEmails(contactsWithCompanies)
       .catch(err => logger.error('Batch email generation failed:', err));
-
     res.json({ success: true, message: `Generating emails for ${contacts.length} contacts` });
   } catch (err) {
     logger.error('Email send error:', err);
