@@ -9,6 +9,7 @@ const axios = require('axios');
 const supabase = require('./config/supabase');
 const logger = require('./utils/logger');
 const { notifyStage } = require('./notificationEngine');
+const { generateBatchEmails } = require('./emailGenerator');
 
 const APOLLO_KEY = process.env.APOLLO_API_KEY;
 const HUNTER_KEY = process.env.HUNTER_API_KEY;
@@ -56,6 +57,16 @@ async function discoverContacts(companies) {
     companies: companies.length,
     summary: `Found ${saved.length} logistics contacts across ${companies.length} companies`
   });
+
+  // Auto-trigger email generation in background
+  if (saved.length > 0) {
+    const contactsWithCompanies = saved.map(c => ({
+      contact: c,
+      company: companies.find(co => co.id === c.company_id) || { id: c.company_id, name: 'Unknown' }
+    }));
+    generateBatchEmails(contactsWithCompanies)
+      .catch(err => logger.error('[ContactDiscovery] Email generation failed:', err));
+  }
 
   return saved;
 }
