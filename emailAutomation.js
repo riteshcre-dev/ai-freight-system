@@ -9,7 +9,7 @@ const sgMail = require('@sendgrid/mail');
 const supabase = require('./config/supabase');
 const logger = require('./utils/logger');
 const { notifyStage } = require('./notificationEngine');
-const { getFollowUpQueue } = require('../workers/queues');
+const { getQueue } = require('./workers/queues');
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -116,7 +116,11 @@ async function scheduleFollowUp(emailRecord, contact, company) {
   // Don't follow up on follow-ups beyond max
   if (emailRecord.sequence_step >= MAX_FOLLOWUPS + 1) return;
 
-  const queue = getFollowUpQueue();
+  const queue = getQueue('emailQueue');
+  if (!queue || !queue.add) {
+    logger.info('[EmailAuto] No queue available, skipping follow-up scheduling');
+    return;
+  }
   const delayMs = FOLLOWUP_DAYS * 24 * 60 * 60 * 1000;
 
   await queue.add(
@@ -141,7 +145,8 @@ async function scheduleFollowUp(emailRecord, contact, company) {
  * Cancel pending follow-ups when a reply is received
  */
 async function cancelFollowUps(emailId) {
-  const queue = getFollowUpQueue();
+  const queue = getQueue('emailQueue');
+  if (!queue) return;
   const jobs = await queue.getJobs(['delayed', 'waiting']);
 
   for (const job of jobs) {
@@ -165,7 +170,8 @@ async function getDailyCount() {
 }
 
 async function requeueForTomorrow(emailRecord) {
-  const queue = getFollowUpQueue();
+  const queue = getQueue('emailQueue');
+  if (!queue) return;
   const msUntilMidnight = getMsUntilMidnight();
   await queue.add('send_email', { emailId: emailRecord.id }, { delay: msUntilMidnight });
 }
