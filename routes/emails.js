@@ -3,6 +3,7 @@ const router = express.Router();
 const logger = require('../utils/logger');
 const supabase = require('../config/supabase');
 const { generateBatchEmails } = require('../emailGenerator');
+const { sendQueuedEmails } = require('../emailAutomation');
 
 router.get('/', async (req, res) => {
   try {
@@ -39,6 +40,16 @@ router.post('/send', async (req, res) => {
   } catch (err) {
     logger.error('Email send error:', err);
     res.status(500).json({ error: 'Failed to trigger emails' });
+  }
+});
+
+router.post('/dispatch', async (req, res) => {
+  try {
+    const sent = await sendQueuedEmails(50);
+    res.json({ success: true, message: `Dispatched ${sent} emails via SendGrid` });
+  } catch (err) {
+    logger.error('Email dispatch error:', err);
+    res.status(500).json({ error: 'Failed to dispatch emails' });
   }
 });
 
